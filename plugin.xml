@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+	<nom>
+		spip-magento
+	</nom>
+	<auteur>BoOz</auteur>
+	<version>0.1</version>
+	<version_base>0.1</version_base>
+	<etat>dev</etat>
+	<licence>[GPLv3->http://www.gnu.org/licenses/gpl-3.0.html]</licence>
+	<description>
+		Connexion en OAuth 1.0 sur Magento avec SPIP 
+	</description>
+	<lien></lien>
+ 	<necessite id="SPIP" version="[2.0.3;]" />
+	<icon></icon>
+	<fontions>OAuth.php</fonctions>
+	<prefix>spip_magento</prefix>
+	<categorie>outils</categorie>
+</plugin>
