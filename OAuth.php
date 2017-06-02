@@ -118,5 +118,14 @@ function oauth_recuperer_ws($url_ws,$token,$secret){
 	$output = curl_exec($c);
 	curl_close($c);
 	$reponse  = json_decode($output,true);
+	
+	// si token expiré en redemander un et relancer la requete.
+	if($erreur = $reponse['messages']['error'][0]["message"] == "token_expired"){
+		spip_log($erreur, "OAuth-erreurs");
+		return false ;
+	}elseif($reponse['messages']['error'][0]["message"]){
+		spip_log($erreur,$reponse['messages']['error'][0]["message"], "OAuth-erreurs") ;
+	}
+	
 	return $reponse ;
 }
