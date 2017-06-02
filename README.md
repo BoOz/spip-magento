@@ -1,4 +1,4 @@
-# spip-magento-oauth
+# spip-magento
 Connexion en OAuth 1.0 sur Magento avec SPIP
 
 ## Configuration 
