@@ -1,14 +1,6 @@
-<?php
+<h1>Test API</h1>
 
-echo "<h1>Test API</h1>" ;
 
-// appel du WS clients
-$url_ws_client = URL_WS_CLIENT . "/34159" ;
+<p>Infos sur le client 34159</p>
+[<pre>(#VAL{34159}|infos_client|print_r{1})</pre>]
 
-echo "<p>Infos clients sur : $url_ws_client</p>" ;
-
-$reponse = recuperer_ws($url_ws_client);
-
-echo "<pre>" ;
-var_dump($reponse);
-echo "</pre><hr>" ;

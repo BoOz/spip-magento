@@ -120,6 +120,7 @@ function oauth_recuperer_ws($url_ws,$token,$secret){
 	$reponse  = json_decode($output,true);
 	
 	// si token expiré en redemander un et relancer la requete.
+	// http://devdocs.magento.com/guides/m1x/api/rest/authentication/oauth_authentication.html
 	if($erreur = $reponse['messages']['error'][0]["message"] == "token_expired"){
 		spip_log($erreur, "OAuth-erreurs");
 		return false ;

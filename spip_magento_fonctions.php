@@ -2,6 +2,11 @@
 
 include_once(find_in_path("OAuth.php"));
 
+function infos_client($id_client){
+	$url_ws_client = URL_WS_CLIENT . "/" . $id_client ;
+	return recuperer_ws($url_ws_client);
+}
+
 // Initialiser le token
 if(!$GLOBALS['meta']["oauth_token"])
 	actualiser_token();
@@ -27,3 +32,4 @@ function recuperer_ws($url_ws){
 	}
 	return $reponse ;
 }
+
