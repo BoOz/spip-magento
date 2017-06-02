@@ -1,9 +1,9 @@
 # spip-oauth
 Connexion OAuth 1.0 avec SPIP
 
-# Dans config/mes_options.php
+## Configuration 
 
-Déclarer la config OAuth 1.0
+Dans config/mes_options.php, déclarer la config OAuth 1.0
 
 ```
 /* Connexion avec OAuth au 1.0 WS Magento */
