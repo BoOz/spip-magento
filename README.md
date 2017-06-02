@@ -5,6 +5,7 @@ Connexion OAuth 1.0 avec SPIP
 
 Déclarer la config OAuth 1.0
 
+```
 /* Connexion avec OAuth au 1.0 WS Magento */
 
 define("SERVICE_PROVIDER","http://magentohost"); 
@@ -15,3 +16,4 @@ define("URL_TOKEN", SERVICE_PROVIDER . "http://magentohost/oauth/token/?key=".CO
 
 /* Récuperer les infos d'un client : http://magentohost/api/rest/customers/[ID_MAGENTO] */
 define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/customers");
+```
