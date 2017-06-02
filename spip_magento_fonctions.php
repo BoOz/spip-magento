@@ -14,6 +14,10 @@ if(!$GLOBALS['meta']["oauth_token"])
 // Demander un nouveau token
 function actualiser_token(){
 	$reponse = oauth_recuperer_token(URL_TOKEN) ;
+	if($reponse == NULL){
+		spip_log("Serveur d'autorisation inaccessible.", "OAuth-erreurs");
+		return false ;
+	}
 	$token = $reponse['token'] ;
 	$secret = $reponse['secret'] ;
 	// enregistrer le token et le secret dans spip_meta
@@ -30,6 +34,8 @@ function recuperer_ws($url_ws){
 		actualiser_token();
 		$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"]);
 	}
+	if($reponse == NULL)
+		return "Serveur REST inaccessible." ;
 	return $reponse ;
 }
 
