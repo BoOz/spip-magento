@@ -1,3 +1,3 @@
 <?php
 
-include_once("OAuth.php");
+include_once(find_in_path("OAuth.php"));

@@ -5,7 +5,6 @@
 	</nom>
 	<auteur>BoOz</auteur>
 	<version>0.1</version>
-	<version_base>0.1</version_base>
 	<etat>dev</etat>
 	<licence>[GPLv3->http://www.gnu.org/licenses/gpl-3.0.html]</licence>
 	<description>
@@ -15,5 +14,6 @@
 	<necessite id="SPIP" version="[2.0.3;]" />
 	<icon></icon>
 	<prefix>spip_magento</prefix>
+	<fonctions>spip_magento_fonctions.php</fonctions>
 	<categorie>outils</categorie>
 </plugin>
