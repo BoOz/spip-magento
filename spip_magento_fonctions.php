@@ -2,9 +2,27 @@
 
 include_once(find_in_path("OAuth.php"));
 
-function infos_client($id_client){
+// Les infos sur un client
+// $tout = infos_client(12345);
+// $email = infos_client(12345,"email");
+
+function infos_client($id_client, $info=''){
 	$url_ws_client = URL_WS_CLIENT . "/" . $id_client ;
-	return recuperer_ws($url_ws_client);
+	$ws = recuperer_ws($url_ws_client);
+	
+	foreach($ws['Subscriptions'] as $a){
+		if($a['StatusCode'] == "ENCOURS")
+			$code_magazine[] = $a['ProductCode'] ;
+	}
+	
+	sort($code_magazine);
+	
+	$infos_client = array_merge($ws['Customer'], array('code_magazine' => join("-", $code_magazine)), array("ws" => $ws)) ;
+	
+	if($infos_client[$info])
+		return $infos_client[$info] ;
+	
+	return $infos_client ;
 }
 
 // Initialiser le token
@@ -39,3 +57,14 @@ function recuperer_ws($url_ws){
 	return $reponse ;
 }
 
+// Vérifier si le mot de passe hashé envoyé par magento correspond au mot de passe de l'utilisateur.
+function verifier_mot_de_passe($mdp_saisi, $mdp_hash){
+	// Décoder le mot de passe
+	// $cle = chaine de longueur X (X =2 ou = 32)
+	// $mot_de_passe_hashé = md5($mot_de_passe_en_clair . $cle) . ":" .$cle;
+	list($pass_hashe,$salt) = explode(":" , $mdp_hash) ;
+	if(md5($mdp_saisi . $salt) == $mdp_hash)
+		return true ;
+	else
+		return false ;
+}
