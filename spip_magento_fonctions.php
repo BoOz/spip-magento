@@ -17,7 +17,11 @@ function infos_client($id_client, $info=''){
 	
 	sort($code_magazine);
 	
-	$infos_client = array_merge($ws['Customer'], array('code_magazine' => join("-", $code_magazine)), array("ws" => $ws)) ;
+	$infos_client = array_merge(
+									$ws['Customer'], 
+									array('code_magazine' => join("-", $code_magazine)),
+									array("ws" => $ws)
+								) ;
 	
 	if($infos_client[$info])
 		return $infos_client[$info] ;
@@ -62,8 +66,9 @@ function verifier_mot_de_passe($mdp_saisi, $mdp_hash){
 	// Décoder le mot de passe
 	// $cle = chaine de longueur X (X =2 ou = 32)
 	// $mot_de_passe_hashé = md5($mot_de_passe_en_clair . $cle) . ":" .$cle;
-	list($pass_hashe,$salt) = explode(":" , $mdp_hash) ;
-	if(md5($mdp_saisi . $salt) == $mdp_hash)
+	list($mdp_hashe,$salt) = explode(":" , $mdp_hash) ;
+	
+	if(md5($mdp_saisi . $salt) == $mdp_hashe)
 		return true ;
 	else
 		return false ;
