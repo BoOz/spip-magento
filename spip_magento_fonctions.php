@@ -143,7 +143,7 @@ function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
 
 // Appeler un webservice en gérant les tokens périmés (même si pas implémenté dans magento apparement...)
 function recuperer_ws_magento($url_ws){
-	// si le token est périmé, on en redemande un autre.
+	// si le token est périmé ou rejetté, on en redemande un autre.
 	if (!$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"])){
 		actualiser_token();
 		$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"]);
@@ -160,6 +160,8 @@ if(!$GLOBALS['meta']["oauth_token"])
 
 // Demander un nouveau token
 function actualiser_token(){
+	
+	// Si serveur maitre on récupere un token sur le serveur d'autorisation.
 	$reponse = oauth_recuperer_token(URL_TOKEN) ;
 	if($reponse == NULL){
 		spip_log("Serveur d'autorisation inaccessible.", "OAuth-erreurs");
@@ -167,6 +169,9 @@ function actualiser_token(){
 	}
 	$token = $reponse['token'] ;
 	$secret = $reponse['secret'] ;
+	
+	// Si serveur esclave, on recupère les meta du spip maitre.
+	
 	// enregistrer le token et le secret dans spip_meta
 	include_spip("inc/meta");
 	ecrire_meta("oauth_token", $token);
