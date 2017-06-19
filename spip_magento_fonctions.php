@@ -1,5 +1,28 @@
 <?php
 
+/*
+	Variables à définir dans mes_options.php
+
+	// Connexion avec OAuth au WS Magento
+	// Définition des identifiants
+	
+	define("SERVICE_PROVIDER","https://magento_server"); //  Attention en prod passer en httpS
+	define("CONSUMER_KEY", "XXXXXXXXXXX");
+	define("CONSUMER_SECRET", "XXXXXXXXXXX");
+	
+	define("URL_TOKEN", SERVICE_PROVIDER . "/api/rest/glm_rest/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
+	
+	// Récuperer les infos d'un client : /api/rest/glm_rest/customers/[ID_MAGENTO]
+	define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/glm_rest/customers");
+	
+	// Cookie SSO
+	// pre-prod
+	define("SSO_COOKIE_KEY", "a9be83ba3816d180aca878b9124d1643");
+	define("SSO_COOKIE_DOMAIN", "mon_domaine.com");
+
+*/
+
+
 include_once(find_in_path("OAuth.php"));
 
 // Les infos sur un client
@@ -73,3 +96,4 @@ function verifier_mot_de_passe($mdp_saisi, $mdp_hash){
 	else
 		return false ;
 }
+
