@@ -37,7 +37,7 @@ function infos_client($ws, $info = ''){
 	return $ws ;
 }
 
-function mettre_a_jour_client($id_client, $email){
+function mettre_a_jour_client_magento($id_client, $email){
 	// Check le ws, enregistrer en bdd et renvoyer la réponse du ws.
 	// On l'appelle avec l'id_magento car l'email peut changer
 	// On peut aussi l'appeler avec l'email si on ne connait pas l'id_magento.
@@ -53,7 +53,7 @@ function mettre_a_jour_client($id_client, $email){
 	else
 		return false ;
 		
-	if($ws = recuperer_ws($url_ws_client)){
+	if($ws = recuperer_ws_magento($url_ws_client)){
 		
 		// faire du ménage et quelques controles
 		if($ws['Subscriptions']["error"])
@@ -87,7 +87,7 @@ function mettre_a_jour_client($id_client, $email){
 		return false ;
 }
 
-function authentifier_lecteur($id_magento, $email, $mdp_saisi){
+function authentifier_client_magento($id_magento, $email, $mdp_saisi){
 
 	// Ouverture des droits d'accès 
 	// a chaque connexion appeler le WS avec l'email car infos à jour (suspension etc).
@@ -115,21 +115,21 @@ function authentifier_lecteur($id_magento, $email, $mdp_saisi){
 	else 
 		$nouveau="oui";
 	
-	$ws = mettre_a_jour_client($id_magento, $email, $nouveau) ;
+	$ws = mettre_a_jour_client_magento($id_magento, $email, $nouveau) ;
 	
 	// Le WS ne reconnait pas le lecteur => retour saisie. 
 	if(!$ws) // Identifiant ou mot de passe invalide.
 		return false ;
 	
 	// vérifier le mot de passe
-	if(verifier_mot_de_passe($mdp_saisi, $ws['password_hash']))
+	if(verifier_mot_de_passe_magento($mdp_saisi, $ws['password_hash']))
 		return $ws ;
 	else
 		return false ;
 }
 
 // Vérifier si le mot de passe hashé envoyé par magento correspond au mot de passe de l'utilisateur.
-function verifier_mot_de_passe($mdp_saisi, $mdp_hash){
+function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
 	// Décoder le mot de passe
 	// $cle = chaine de longueur X (X =2 ou = 32)
 	// $mot_de_passe_hashé = md5($mot_de_passe_en_clair . $cle) . ":" .$cle;
@@ -142,7 +142,7 @@ function verifier_mot_de_passe($mdp_saisi, $mdp_hash){
 }
 
 // Appeler un webservice en gérant les tokens périmés (même si pas implémenté dans magento apparement...)
-function recuperer_ws($url_ws){
+function recuperer_ws_magento($url_ws){
 	// si le token est périmé, on en redemande un autre.
 	if (!$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"])){
 		actualiser_token();
