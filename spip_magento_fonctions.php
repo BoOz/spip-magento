@@ -11,7 +11,8 @@
 	define("CONSUMER_SECRET", "XXXXXXXXXXX");
 	
 	define("URL_TOKEN", SERVICE_PROVIDER . "/api/rest/glm_rest/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
-	
+	define("SERVEUR_TOKEN_MAITRE", ""); // eventuel fichier coneexion bdd ou chercher des meta token.
+
 	// Récuperer les infos d'un client : /api/rest/glm_rest/customers/[ID_MAGENTO]
 	define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/glm_rest/customers");
 	
@@ -153,24 +154,27 @@ function recuperer_ws_magento($url_ws){
 	return $reponse ;
 }
 
-
 // Initialiser le token
-if(!$GLOBALS['meta']["oauth_token"])
+if(!$GLOBALS['meta']["oauth_token"] OR !$GLOBALS['meta']["oauth_secret"])
 	actualiser_token();
 
 // Demander un nouveau token
 function actualiser_token(){
 	
-	// Si serveur maitre on récupere un token sur le serveur d'autorisation.
-	$reponse = oauth_recuperer_token(URL_TOKEN) ;
-	if($reponse == NULL){
-		spip_log("Serveur d'autorisation inaccessible.", "OAuth-erreurs");
-		return false ;
+	// Si on est sur le serveur maitre on récupere un token sur le serveur d'autorisation.
+	if(!defined("SERVEUR_TOKEN_MAITRE")){
+		$reponse = oauth_recuperer_token(URL_TOKEN) ;
+		if($reponse == NULL){
+			spip_log("Serveur d'autorisation inaccessible.", "OAuth-erreurs");
+			return false ;
+		}
+		$token = $reponse['token'] ;
+		$secret = $reponse['secret'] ;
+	}else{
+		// Si on est sur un serveur esclave, on recupère le token dans les metas du spip maitre.
+		$token = sql_getfetsel("valeur", "spip_meta","nom='oauth_token'","","","","", SERVEUR_TOKEN_MAITRE);
+		$secret = sql_getfetsel("valeur", "spip_meta","nom='oauth_secret'","","","","", SERVEUR_TOKEN_MAITRE);
 	}
-	$token = $reponse['token'] ;
-	$secret = $reponse['secret'] ;
-	
-	// Si serveur esclave, on recupère les meta du spip maitre.
 	
 	// enregistrer le token et le secret dans spip_meta
 	include_spip("inc/meta");
