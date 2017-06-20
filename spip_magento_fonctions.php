@@ -53,7 +53,7 @@ function mettre_a_jour_client_magento($id_client, $email){
 		$url_ws_client = URL_WS_CLIENT . "/" . $email . "?email=1" ;
 	else
 		return false ;
-		
+	
 	if($ws = recuperer_ws_magento($url_ws_client)){
 		
 		// faire du ménage et quelques controles
