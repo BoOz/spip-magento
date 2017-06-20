@@ -13,7 +13,7 @@ function oauth_recuperer_token($url_token){
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$output = curl_exec($ch);
 	curl_close($ch);
-	$reponse  = json_decode($output,true);
+	$reponse = json_decode($output,true);
 	//var_dump($reponse);
 	return $reponse ;
 }
@@ -39,9 +39,9 @@ function oauth_generer_parametres($token){
 * and the concated with &.
 */
 
-function oauth_generer_base_string($method, $url_ws, $signable_parameters){
+function oauth_generer_base_string($method, $url, $signable_parameters){
 	$method = strtoupper($method);
-	$base_string = rawurlencode($method) . "&" . rawurlencode($url_ws) . "&" . rawurlencode($signable_parameters) ;
+	$base_string = rawurlencode($method) . "&" . rawurlencode($url) . "&" . rawurlencode($signable_parameters) ;
 	return $base_string ;
 }
 
@@ -69,6 +69,8 @@ function oauth_generer_parametres_signables($parametres){
 			$pairs[] = $parameter . '=' . $value;
 		}
 	}
+	// The request contains the following parameters (oauth_signature excluded) which are ordered and concatenated into a normalized string:
+	sort ($pairs);
 	
 	// Each name-value pair is separated by an '&' character (ASCII code 38)
 	$signable_parameters = implode('&', $pairs);
@@ -102,11 +104,26 @@ function oauth_generer_entetes($oauth){
 }
 
 function oauth_recuperer_ws($url_ws,$token,$secret){
+	// Parametres Oauth
 	$parametres = oauth_generer_parametres($token) ;
+	
+	// Parametres de la requete
+	$url = parse_url($url_ws) ;
+	$params_url = explode("&", $url['query']) ;
+	if(is_array($params_url))
+		foreach($params_url as $p){
+			$pe = explode("=", $p);
+			if($pe[0] != "")
+				$parametres[$pe[0]] = $pe[1] ;
+		}
+	
+	// Signature
 	$signable_parameters = oauth_generer_parametres_signables($parametres);
-	$base_string = oauth_generer_base_string("GET", $url_ws, $signable_parameters);
+	// The URL used in the Signature Base String MUST include the scheme, authority, and path, and MUST exclude the query and fragment as defined by [RFC3986] section 3. 
+	$url = $url['scheme'] . "://" . $url['host'] . $url['path'];
+	$base_string = oauth_generer_base_string("GET", $url, $signable_parameters);
 	$signature = oauth_generer_signature(CONSUMER_SECRET,$secret,$base_string);
-
+	
 	// On ajoute la signature dans les parametres pour les entetes.
 	$parametres['oauth_signature'] = $signature ;
 	// GET via curl
