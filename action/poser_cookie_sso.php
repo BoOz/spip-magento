@@ -21,7 +21,7 @@ function action_poser_cookie_sso() {
 	include_spip('inc/cookie');
 	// A cause de varnish ? si le cookie s'appelle pas spip_xxx on peut pas le lire dans $_COOKIE
 	// $nom_cookie = "lmd_a_s" ;
-	$nom_cookie = "spip_lmd_a_s" ;
+	$nom_cookie = "lmd_a_s" ;
 	// marche en https sécurisé (true).
 	spip_setcookie($nom_cookie, $crypted, time()+3600*24*100,'/', SSO_COOKIE_DOMAIN, true);
 }
