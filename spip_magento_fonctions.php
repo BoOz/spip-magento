@@ -78,7 +78,13 @@ function mettre_a_jour_client_magento($id_client, $email){
 		
 		$ws = array_merge(
 						$ws['Customer'],
-						array('code_magazine' => join("-", $code_magazine)),
+						array(
+							'nom' => "Erreur NOM" ,
+							'droits_lecteur' => "-1" ,
+							'date_fin' => 'Erreur date' ,
+							'groupeur' => 'Erreur Groupeur' ,
+							'code_magazine' => join("-", $code_magazine)
+						),
 						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 		) ;
 		
