@@ -139,7 +139,7 @@ function oauth_recuperer_ws($url_ws,$token,$secret){
 	// si token expiré ou rejeté, en redemander un et relancer la requete.
 	// http://devdocs.magento.com/guides/m1x/api/rest/authentication/oauth_authentication.html
 	if($reponse['messages']['error'][0]["message"]){
-		spip_log($reponse['messages']['error'][0]["message"], "OAuth-erreurs") ;
+		spip_log($url_ws ." : " . $reponse['messages']['error'][0]["message"], "OAuth-erreurs") ;
 		return false ;
 	}
 	
