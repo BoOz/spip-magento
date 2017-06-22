@@ -15,6 +15,5 @@
 	<icon></icon>
 	<prefix>spip_magento</prefix>
 	<fonctions>spip_magento_fonctions.php</fonctions>
-	<options>spip_magento_options.php</options>
 	<categorie>outils</categorie>
 </plugin>
