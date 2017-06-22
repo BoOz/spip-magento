@@ -1,7 +1,7 @@
 <?php
 
 // Chercher un cookie SSO
-$cookie_sso = $_COOKIE['spip_lmd_a_s'] ;
+$cookie_sso = $_COOKIE['lmd_a_s'] ;
 if($cookie_sso){
 	$cle_secrete = SSO_COOKIE_KEY ;
 	$cipher = 'AES-128-CBC';
