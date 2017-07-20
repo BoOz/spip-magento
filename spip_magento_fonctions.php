@@ -38,7 +38,7 @@ function infos_client($ws, $info = ''){
 	return $ws ;
 }
 
-function mettre_a_jour_client_magento($id_client, $email){
+function mettre_a_jour_client_magento($id_client, $email=""){
 	// Check le ws, enregistrer en bdd et renvoyer la réponse du ws.
 	// On l'appelle avec l'id_magento car l'email peut changer
 	// On peut aussi l'appeler avec l'email si on ne connait pas l'id_magento.
