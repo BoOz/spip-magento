@@ -18,7 +18,7 @@
 	
 	// Cookie SSO
 	// pre-prod
-	define("SSO_COOKIE_KEY", "a9be83ba3816d180aca878b9124d1643");
+	define("SSO_COOKIE_KEY", "xxx");
 	define("SSO_COOKIE_DOMAIN", "mon_domaine.com");
 
 */
@@ -47,39 +47,49 @@ function mettre_a_jour_client_magento($id_client, $email){
 	// - Cookie reset posé par Arvato
 	// - Cron après la connexion d'un lecteur connu
 	
+	
 	if($id_client)
 		$url_ws_client = URL_WS_CLIENT . "/" . $id_client ;
 	elseif($email)
-		$url_ws_client = URL_WS_CLIENT . "/" . $email . "?email=1" ;
+		$url_ws_client = URL_WS_CLIENT . "/" . rawurlencode($email) . "?email=1" ;
 	else
 		return false ;
 	
 	if($ws = recuperer_ws_magento($url_ws_client)){
 		
+		// var_dump("<pre>",$ws,"<pre>");
+		
 		// faire du ménage et quelques controles
-		if($ws['Subscriptions']["error"])
+		if($ws['abonnements']["error"])
 			// le ws Arvato à calé, que fait-on ?
 			return array_merge(
 						array('Erreur Arvato' => "Panne CSW chez Arvato..."),
-						$ws['Customer'],
+						$ws['abonne'],
 						array("ws" => $ws)
 					);
 		
+		// var_dump("<pre>",$ws['abonnements'],"<pre>");
+		
 		// Controle des droits
-		foreach($ws['Subscriptions'] as $a){
+		foreach($ws['abonnements'] as $a){
 			if($a['StatusCode'] == "ENCOURS")
 				$code_magazine[] = $a['ProductCode'] ;
 		}
 		
 		sort($code_magazine);
 		
+		// var_dump("<pre>",$code_magazine,"<pre>");
+		
 		// Enregistrer en BDD
 		// TODO
 		
 		$ws = array_merge(
-						$ws['Customer'],
+						$ws['abonne'],
 						array(
-							'nom' => "Erreur NOM" ,
+							'prenom_nom' => $ws['abonne']["prenom"] . " " . $ws['abonne']["nom"],
+							'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
+							'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
+							'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
 							'droits_lecteur' => "-1" ,
 							'date_fin' => 'Erreur date' ,
 							'groupeur' => 'Erreur Groupeur' ,
@@ -87,6 +97,8 @@ function mettre_a_jour_client_magento($id_client, $email){
 						),
 						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 		) ;
+		
+		// var_dump("<pre>",$ws,"<pre>");
 		
 		return $ws ;
 	}
@@ -124,12 +136,14 @@ function authentifier_client_magento($id_magento, $email, $mdp_saisi){
 	
 	$ws = mettre_a_jour_client_magento($id_magento, $email, $nouveau) ;
 	
+	// var_dump("<pre>",$ws,"</pre>");
+	
 	// Le WS ne reconnait pas le lecteur => retour saisie. 
 	if(!$ws) // Identifiant ou mot de passe invalide.
 		return false ;
 	
 	// vérifier le mot de passe
-	if(verifier_mot_de_passe_magento($mdp_saisi, $ws['password_hash']))
+	if(verifier_mot_de_passe_magento($mdp_saisi, $ws['password']))
 		return $ws ;
 	else
 		return false ;
@@ -187,5 +201,14 @@ function actualiser_token(){
 	ecrire_meta("oauth_token", $token);
 	ecrire_meta("oauth_secret",$secret);
 	lire_metas();
+}
+
+function lire_cookie_sso_magento($cookie_sso){
+	$cle_secrete = SSO_COOKIE_KEY ;
+	$cipher = 'AES-128-CBC';
+	$options = 0;
+	$iv = substr($cle_secrete, -16);
+	$id_magento = openssl_decrypt($cookie_sso, $cipher , $private_key , $options, $iv);
+	return $id_magento ;
 }
 
