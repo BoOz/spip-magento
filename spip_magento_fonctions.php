@@ -170,7 +170,7 @@ function catalogue($params){
 		else
 			$p = $params ;
 			
-	var_dump(URL_WS_CATALOGUE . $p);
+		//var_dump(URL_WS_CATALOGUE . $p);
 	return recuperer_ws_magento(URL_WS_CATALOGUE . $p);
 }
 
