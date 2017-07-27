@@ -11,11 +11,12 @@
 	define("CONSUMER_SECRET", "XXXXXXXXXXX");
 	
 	define("URL_TOKEN", SERVICE_PROVIDER . "/api/rest/glm_rest/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
-	define("SERVEUR_TOKEN_MAITRE", ""); // eventuel fichier coneexion bdd ou chercher des meta token.
+	define("SERVEUR_TOKEN_MAITRE", ""); // eventuel fichier connexion bdd ou chercher des meta token.
 
 	// Récuperer les infos d'un client : /api/rest/glm_rest/customers/[ID_MAGENTO]
 	define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/glm_rest/customers");
-	
+	define("URL_WS_CATALOGUE", SERVICE_PROVIDER . "/api/rest/glm_rest/products/list");
+
 	// Cookie SSO
 	// pre-prod
 	define("SSO_COOKIE_KEY", "xxx");
@@ -160,6 +161,17 @@ function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
 		return true ;
 	else
 		return false ;
+}
+
+function catalogue($params){
+	if($params)
+		if(!preg_match("^\?", $params))
+			$p = "?" . $params ;
+		else
+			$p = $params ;
+			
+	var_dump(URL_WS_CATALOGUE . $p);
+	return recuperer_ws_magento(URL_WS_CATALOGUE . $p);
 }
 
 // Appeler un webservice en gérant les tokens périmés (même si pas implémenté dans magento apparement...)
