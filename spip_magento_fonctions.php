@@ -66,7 +66,7 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 			return array_merge(
 						array('Erreur Arvato' => "Panne CSW chez Arvato..."),
 						$ws['abonne'],
-						array("ws" => $ws)
+						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 					);
 		
 		// var_dump("<pre>",$ws['abonnements'],"<pre>");
