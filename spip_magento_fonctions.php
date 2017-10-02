@@ -48,7 +48,6 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 	// - Cookie reset posé par Arvato
 	// - Cron après la connexion d'un lecteur connu
 	
-	
 	if($id_client)
 		$url_ws_client = URL_WS_CLIENT . "/" . $id_client ;
 	elseif($email)
@@ -71,13 +70,22 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 		
 		// var_dump("<pre>",$ws['abonnements'],"<pre>");
 		
-		// Controle des droits
-		foreach($ws['abonnements'] as $a){
-			if($a['StatusCode'] == "ENCOURS")
-				$code_magazine[] = $a['ProductCode'] ;
-		}
+		// dans le plugin arvato_sync
+		/*
+			array(
+			'droits' => $droits, 
+			'date_fin' => $date_fin_abo ,
+			'code_magazine' => $code_magazine, 
+			'type_contrat' => $type_contrat, 
+			'groupeur' => $groupeur, 
+			'date_achat' => $date_achat 
+		) ;
 		
-		sort($code_magazine);
+		*/
+		include_spip("droits_abonne");
+		$infos_abonnement = droits_abonne($ws);
+		
+		// var_dump($infos_abonnement);
 		
 		// var_dump("<pre>",$code_magazine,"<pre>");
 		
@@ -91,10 +99,11 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 							'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
 							'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
 							'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
-							'droits_lecteur' => "-1" ,
-							'date_fin' => 'Erreur date' ,
-							'groupeur' => 'Erreur Groupeur' ,
-							'code_magazine' => join("-", $code_magazine)
+							'droits_lecteur' => $infos_abonnement["droits"] ,
+							'date_fin' => $infos_abonnement["date_fin"] ,
+							'groupeur' => $infos_abonnement["groupeur"] ,
+							'code_magazine' => $infos_abonnement["code_magazine"],
+							'type_contrat' => $infos_abonnement["type_contrat"]
 						),
 						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 		) ;
