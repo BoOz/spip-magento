@@ -12,18 +12,21 @@
 	
 	define("URL_TOKEN", SERVICE_PROVIDER . "/api/rest/glm_rest/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
 	define("SERVEUR_TOKEN_MAITRE", ""); // eventuel fichier connexion bdd ou chercher des meta token.
-
+	
 	// Récuperer les infos d'un client : /api/rest/glm_rest/customers/[ID_MAGENTO]
 	define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/glm_rest/customers");
 	define("URL_WS_CATALOGUE", SERVICE_PROVIDER . "/api/rest/glm_rest/products/list");
-
+	
 	// Cookie SSO
 	// pre-prod
 	define("SSO_COOKIE_KEY", "xxx");
 	define("SSO_COOKIE_DOMAIN", "mon_domaine.com");
+	
+	// Prévoir une option pour enregistrer les connexions en BDD (TODO)
+	
+	// Prévoir de lister les produits VPC avec accès numériques (TODO)
 
 */
-
 
 include_once(find_in_path("OAuth.php"));
 
@@ -45,7 +48,7 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 	// On peut aussi l'appeler avec l'email si on ne connait pas l'id_magento.
 	// A appeler quand :
 	// - Login d'un nouveau
-	// - Cookie reset posé par Arvato
+	// - Cookie reset posé coté Magento
 	// - Cron après la connexion d'un lecteur connu
 	
 	if($id_client)
@@ -61,51 +64,33 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 		
 		// faire du ménage et quelques controles
 		if($ws['abonnements']["error"])
-			// le ws Arvato à calé, que fait-on ?
+			// le ws a calé, que fait-on ?
 			return array_merge(
-						array('Erreur Arvato' => "Panne CSW chez Arvato..."),
-						$ws['abonne'],
-						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
-					);
+				array('Erreur WS' => "Panne WS..."),
+					$ws['abonne'],
+					array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
+				);
 		
-		// var_dump("<pre>",$ws['abonnements'],"<pre>");
-		
-		// dans le plugin arvato_sync
-		/*
-			array(
-			'droits' => $droits, 
-			'date_fin' => $date_fin_abo ,
-			'code_magazine' => $code_magazine, 
-			'type_contrat' => $type_contrat, 
-			'groupeur' => $groupeur, 
-			'date_achat' => $date_achat 
-		) ;
-		
-		*/
 		include_spip("droits_abonne");
 		$infos_abonnement = droits_abonne($ws);
-		
-		// var_dump($infos_abonnement);
-		
-		// var_dump("<pre>",$code_magazine,"<pre>");
 		
 		// Enregistrer en BDD
 		// TODO
 		
 		$ws = array_merge(
-						$ws['abonne'],
-						array(
-							'prenom_nom' => $ws['abonne']["prenom"] . " " . $ws['abonne']["nom"],
-							'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
-							'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
-							'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
-							'droits_lecteur' => $infos_abonnement["droits"] ,
-							'date_fin' => $infos_abonnement["date_fin"] ,
-							'groupeur' => $infos_abonnement["groupeur"] ,
-							'code_magazine' => $infos_abonnement["code_magazine"],
-							'type_contrat' => $infos_abonnement["type_contrat"]
-						),
-						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
+			$ws['abonne'],
+			array(
+				'prenom_nom' => $ws['abonne']["prenom"] . " " . $ws['abonne']["nom"],
+				'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
+				'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
+				'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
+				'droits_lecteur' => $infos_abonnement["droits"] ,
+				'date_fin' => $infos_abonnement["date_fin"] ,
+				'groupeur' => $infos_abonnement["groupeur"] ,
+				'code_magazine' => $infos_abonnement["code_magazine"],
+				'type_contrat' => $infos_abonnement["type_contrat"]
+			),
+			array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 		) ;
 		
 		// var_dump("<pre>",$ws,"<pre>");
@@ -162,8 +147,6 @@ function authentifier_client_magento($id_magento, $email, $mdp_saisi){
 // Vérifier si le mot de passe hashé envoyé par magento correspond au mot de passe de l'utilisateur.
 function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
 	// Décoder le mot de passe
-	// $cle = chaine de longueur X (X =2 ou = 32)
-	// $mot_de_passe_hashé = md5($mot_de_passe_en_clair . $cle) . ":" .$cle;
 	list($mdp_hashe,$salt) = explode(":" , $mdp_hash) ;
 	
 	if(md5($mdp_saisi . $salt) == $mdp_hashe)
@@ -178,8 +161,8 @@ function catalogue($params){
 			$p = "?" . $params ;
 		else
 			$p = $params ;
-			
-		//var_dump(URL_WS_CATALOGUE . $p);
+	
+	//var_dump(URL_WS_CATALOGUE . $p);
 	return recuperer_ws_magento(URL_WS_CATALOGUE . $p);
 }
 
