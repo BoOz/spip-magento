@@ -40,6 +40,8 @@ function droits_abonne($ws_infos){
 	$titres_archives = array('MDA'); // droits = 3
 	$titres_mav = array('MV'); // droits_mav = 1
 	
+	$code_magazine = array();
+	
 	// lister les abonnements actifs
 	foreach($abonnements as $a){
 		// Abonnement actif
@@ -74,8 +76,10 @@ function droits_abonne($ws_infos){
 	
 	// applatir les données
 	foreach(array("code_magazine", "groupeur", "type_contrat") as $d){
-		sort($$d);
-		$$d = implode("-",$$d) ;
+		if(is_array($$d)){
+			sort($$d);
+			$$d = implode("-",$$d) ;
+		}
 	}
 	
 	$r = array(
