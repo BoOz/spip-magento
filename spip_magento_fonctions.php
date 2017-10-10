@@ -29,6 +29,7 @@
 */
 
 include_once(find_in_path("OAuth.php"));
+include_spip("droits_abonne");
 
 // Les infos sur un client
 // $tout = infos_client(12345);
@@ -71,7 +72,6 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 					array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 				);
 		
-		include_spip("droits_abonne");
 		$infos_abonnement = droits_abonne($ws);
 		
 		// Enregistrer en BDD
@@ -212,7 +212,6 @@ function lire_cookie_sso_magento($cookie_sso){
 	$cipher = 'AES-128-CBC';
 	$options = 0;
 	$iv = substr($cle_secrete, -16);
-	$id_magento = openssl_decrypt($cookie_sso, $cipher , $private_key , $options, $iv);
-	return $id_magento ;
+	$c = openssl_decrypt($cookie_sso, $cipher , $cle_secrete , $options, $iv);
+	return $c ;
 }
-
