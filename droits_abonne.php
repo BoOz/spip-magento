@@ -94,6 +94,7 @@ function droits_abonne($ws_infos){
 	return $r ;
 }
 
+// a virer dans paywall
 function produits_vpc_magento($email){
 	// en direct sur le ws
 	// prendre plutot dans la bdd lecteur ?

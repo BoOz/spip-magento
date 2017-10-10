@@ -69,13 +69,15 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 			return array_merge(
 				array('Erreur WS' => "Panne WS..."),
 					$ws['abonne'],
-					array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
-				);
-		
+					array(
+					'prenom_nom' => $ws['abonne']["prenom"] . " " . $ws['abonne']["nom"],
+					'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
+					'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
+					'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
+					),
+						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
+					);
 		$infos_abonnement = droits_abonne($ws);
-		
-		// Enregistrer en BDD
-		// TODO
 		
 		$ws = array_merge(
 			$ws['abonne'],
