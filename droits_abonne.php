@@ -93,34 +93,3 @@ function droits_abonne($ws_infos){
 	
 	return $r ;
 }
-
-// a virer dans paywall
-function produits_vpc_magento($email){
-	// en direct sur le ws
-	// prendre plutot dans la bdd lecteur ?
-	$ws = mettre_a_jour_client_magento('', $email);
-	$ws = json_decode($ws['ws'], true);
-	$articles = $ws["vpc"];
-	$produits = array();
-	
-	if(is_array($articles)){
-		foreach($articles as $commande){
-			$produits[] = $commande['codearticle'] ;
-		}
-	}
-	// ajouter les pack multi titres. PCMD027 contient en fait MD0278 + MD0287
-	if(in_array("PCMD027", $produits)){
-		$produits[] = "MD0278" ;
-		$produits[] = "MD0287" ;
-	}
-	// ajouter les versions offertes
-	if(in_array("MDP04", $produits)){
-		$produits[] = "MD0287" ;
-	}
-	if(in_array("MDP05", $produits)){
-		$produits[] = "MD0278" ;
-	}
-	// var_dump($produits_achetes);
-	
-	return $produits ;
-}
