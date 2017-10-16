@@ -70,6 +70,9 @@ function droits_abonne($ws_infos){
 				// 3 pour le web + archives
 				if(in_array($a["TitleCode"], $titres_archives))
 					$droits = 3;
+				// droits_mav pour mav
+				if(in_array($a["TitleCode"], $titres_mav))
+					$droits_mav = 1 ;
 			}
 		}
 	}
@@ -88,7 +91,8 @@ function droits_abonne($ws_infos){
 		'code_magazine' => $code_magazine, 
 		'type_contrat' => $type_contrat, 
 		'groupeur' => $groupeur, 
-		'date_achat' => $date_achat 
+		'date_achat' => $date_achat, 
+		'droits_mav' => $droits_mav
 	);
 	
 	return $r ;

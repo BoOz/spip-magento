@@ -91,7 +91,8 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 					'date_fin' => $infos_abonnement["date_fin"] ,
 					'groupeur' => $infos_abonnement["groupeur"] ,
 					'code_magazine' => $infos_abonnement["code_magazine"],
-					'type_contrat' => $infos_abonnement["type_contrat"]
+					'type_contrat' => $infos_abonnement["type_contrat"],
+					'droits_mav' => $infos_abonnement["droits_mav"]
 				),
 				array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 			) ;
