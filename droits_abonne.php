@@ -68,8 +68,23 @@ function droits_abonne($ws_infos){
 				if(in_array($a["TitleCode"], $titres_web) AND intval($droits) < 3)
 					$droits = 1;
 				// 3 pour le web + archives
-				if(in_array($a["TitleCode"], $titres_archives))
-					$droits = 3;
+				if(in_array($a["TitleCode"], $titres_archives)){
+					// cas d'un abo 5 jours
+					// pas d'identifiant du titre maitre // ADD
+					if(is_null($a["MasterSubscriptionId"]) AND $a["SubscriptionType"] == "ADD"){
+						// laisser les droits ouverts 5 jours après la commande
+						$date_achat = strtotime($a["OrderDate"]) ;
+						$date_fin = date('Y-m-d H:i:s', $date_achat + 5*24*3600);
+						
+						// si l'offre n'est pas perimee
+						if(strtotime($date_fin) > time()){
+							$droits = 3;
+						}
+						
+					}else{ // cas général
+						$droits = 3;
+					}
+				}
 				// droits_mav pour mav
 				if(in_array($a["TitleCode"], $titres_mav))
 					$droits_mav = 1 ;
@@ -87,7 +102,7 @@ function droits_abonne($ws_infos){
 	
 	$r = array(
 		'droits' => $droits, 
-		'date_fin' => $date_fin_abo ,
+		'date_fin' => $date_fin ,
 		'code_magazine' => $code_magazine, 
 		'type_contrat' => $type_contrat, 
 		'groupeur' => $groupeur, 
