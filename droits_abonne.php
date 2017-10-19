@@ -39,20 +39,26 @@ function droits_abonne($ws_infos){
 	$titres_web = array('MD','MDNUM'); // droits = 1
 	$titres_archives = array('MDA'); // droits = 3
 	$titres_mav = array('MV'); // droits_mav = 1
-	
+	$titres = array_merge($titres_web, $titres_archives, $titres_mav);
 	$code_magazine = array();
 	
 	// lister les abonnements actifs
 	foreach($abonnements as $a){
-		// Abonnement actif
-		if($a['StatusCode'] == "ENCOURS"){
+		// Abonnements avec une date de fin dans le futur,
+		// pas suspendu (AND $a['StatusCode'] != "SUSPENDU") mais se débloque qu'au prochain tirage donc non fiable TODO.
+		if(strtotime($a['EndDateCoMd']) > time() AND in_array($a["TitleCode"], $titres)){
 			
 			// enregistrer le type d'abo
 			if(!in_array($a["TitleCode"], $code_magazine))
 				$code_magazine[] = $a["TitleCode"] ;
 			
-			if($a["SubscriptionType"] == "ADD")
+			if($a["SubscriptionType"] == "ADD"){
 				$type_contrat[] = 1;
+				// date de fin du titre maitre
+				if(is_null($a["MasterSubscriptionId"])){
+					$date_fin = date('Y-m-d H:i:s', strtotime($a['EndDateCoMd'])) ;
+				}
+			}
 			elseif($a["SubscriptionType"] == "ADI")
 				$type_contrat[] = 2;
 			else
