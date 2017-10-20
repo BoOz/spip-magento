@@ -61,7 +61,9 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 	
 	if($ws = recuperer_ws_magento($url_ws_client)){
 		
-		// var_dump("<pre>",$ws,"<pre>");
+		//var_dump("<pre>",$ws,"<pre>");
+		if(!is_array($ws))
+			return false ;
 		
 		// faire du ménage et quelques controles
 		if($ws['abonnements']["error"])
