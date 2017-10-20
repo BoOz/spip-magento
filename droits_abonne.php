@@ -56,7 +56,9 @@ function droits_abonne($ws_infos){
 				$type_contrat[] = 1;
 				// date de fin du titre maitre
 				if(is_null($a["MasterSubscriptionId"])){
-					$date_fin = date('Y-m-d H:i:s', strtotime($a['EndDateCoMd'])) ;
+					$date_fin_abo = date('Y-m-d H:i:s', strtotime($a['EndDateCoMd'])) ;
+					if(!$date_fin OR $date_fin < $date_fin_abo)
+						$date_fin = $date_fin_abo ;
 				}
 			}
 			elseif($a["SubscriptionType"] == "ADI")
