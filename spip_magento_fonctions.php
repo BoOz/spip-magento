@@ -155,7 +155,7 @@ function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
 	// Décoder le mot de passe
 	list($mdp_hashe,$salt) = explode(":" , $mdp_hash) ;
 	
-	if(md5($mdp_saisi . $salt) == $mdp_hashe)
+	if(md5($mdp_saisi . $salt) == $mdp_hashe OR md5($salt . $mdp_saisi) == $mdp_hashe)
 		return true ;
 	else
 		return false ;
