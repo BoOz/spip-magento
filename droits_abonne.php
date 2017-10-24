@@ -42,6 +42,7 @@ function droits_abonne($ws_infos){
 	$titres = array_merge($titres_web, $titres_archives, $titres_mav);
 	$code_magazine = array();
 	
+	include_spip("inc/filtres");
 	// lister les abonnements actifs
 	foreach($abonnements as $a){
 		// Abonnements avec une date de fin dans le futur,
