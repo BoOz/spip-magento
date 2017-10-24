@@ -48,8 +48,12 @@ function droits_abonne($ws_infos){
 		// Abonnements avec une date de fin dans le futur,
 		// pas suspendu (AND $a['StatusCode'] != "SUSPENDU") mais se débloque qu'au prochain tirage donc non fiable TODO.
 		// attention que strtotime de 2099-12-31T00:00:00 ne marche pas (ADI)
+		// attention les simulated n'ont pas de datecomd
 		
-		if( (strtotime($a['EndDateCoMd']) > time() OR annee($a['EndDateCoMd']) == 2099 ) AND in_array($a["TitleCode"], $titres) ){
+		if( 
+			(strtotime($a['EndDateCoMd']) > time() OR annee($a['EndDateCoMd']) == 2099 OR strtotime($a['EndDate']) > time()) 
+			AND in_array($a["TitleCode"], $titres) 
+			){
 			// enregistrer le type d'abo
 			if(!in_array($a["TitleCode"], $code_magazine))
 				$code_magazine[] = $a["TitleCode"] ;
