@@ -72,10 +72,11 @@ function droits_abonne($ws_infos){
 			else
 				$type_contrat[] = $a["SubscriptionType"] ;
 			
-			// bloquer ou pas des groupeurs
+			// bloquer les groupeurs (sauf certains)
 			if($a["IntermediateId"] AND $a["IntermediateId"] != "0010140366" AND $a["IntermediateId"] !="0010447676"){
 				$groupeur[] = $a["IntermediateId"] ;
-				$droits = 0 ;
+				if(intval($droits) <= 0) // ne pas bloquer si un autre abo existe.
+					$droits = 0 ;
 			}else{
 				// Calcul des droits
 				// 1 pour le web seul
