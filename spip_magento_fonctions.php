@@ -100,7 +100,7 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 			) ;
 		
 		// var_dump("<pre>",$ws,"<pre>");
-		enregistrer_lecteur_diplo($ws);
+		// enregistrer si une fonction existe.
 		return $ws ;
 	}
 	else
