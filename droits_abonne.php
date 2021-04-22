@@ -73,7 +73,11 @@ function droits_abonne($ws_infos){
 				$type_contrat[] = $a["SubscriptionType"] ;
 			
 			// bloquer les groupeurs (sauf certains)
-			if($a["IntermediateId"] AND $a["IntermediateId"] != "0010140366" AND $a["IntermediateId"] !="0010447676"){
+			// 0011706403 RDE web
+			// 0010140366 Exact editions
+			// 0010447676 Exact editions
+			
+			if($a["IntermediateId"] AND $a["IntermediateId"] != "0010140366" AND $a["IntermediateId"] !="0010447676" AND $a["IntermediateId"] !="0011706403"){
 				$groupeur[] = $a["IntermediateId"] ;
 				if(intval($droits) <= 0) // ne pas bloquer si un autre abo existe.
 					$droits = 0 ;
