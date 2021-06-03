@@ -84,60 +84,6 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 		return false ;
 }
 
-function authentifier_client_magento($id_magento, $email, $mdp_saisi){
-
-	// Ouverture des droits d'accès 
-	// a chaque connexion appeler le WS avec l'email car infos à jour (suspension etc).
-	// si infos locales donnent deja acces => appel en job_queue
-	// si infos locales ne donnent pas d'acces => appel en direct
-	// recevoir la réponse $xml
-	// verifier si le $xml['pass'] ==  $pass (le pass enregistré est le même que celui saisi)
-	
-	// utiliser juste les infos locales.
-	// puis si echec mdp interroger le WS avec e-mail 
-
-/*
-	// Cherchons en local si on a des infos recentes qui correspondent au mail. TODO
-	include_spip("base/abstract_sql");
-	$client_local = sql_fetsel(array('password_hash', 'xml'), array('abonnes'), "email='".$email."' and nouvel_email=''", "", "date_maj desc", "0,1");
-	$client_local_pass = $client_local['password_hash'] ;
-	$client_local_xml = $client_local['xml'] ;
-
-*/
-
-	// Si echec ouverture de droits avec infos locales (mail inconnu, mauvais mdp, pas de droits) interroger le WS avec l'email (changement de mot de passe, nouveau client, commande périmée) ;
-	
-	if(is_array($client_local))
-		$nouveau = "non" ;
-	else 
-		$nouveau="oui";
-	
-	$ws = mettre_a_jour_client_magento($id_magento, $email, $nouveau) ;
-	
-	// var_dump("<pre>",$ws,"</pre>");
-	
-	// Le WS ne reconnait pas le lecteur => retour saisie. 
-	if(!$ws) // Identifiant ou mot de passe invalide.
-		return false ;
-	
-	// vérifier le mot de passe
-	if(verifier_mot_de_passe_magento($mdp_saisi, $ws['password']))
-		return $ws ;
-	else
-		return false ;
-}
-
-// Vérifier si le mot de passe hashé envoyé par magento correspond au mot de passe de l'utilisateur.
-function verifier_mot_de_passe_magento($mdp_saisi, $mdp_hash){
-	// Décoder le mot de passe
-	list($mdp_hashe,$salt) = explode(":" , $mdp_hash) ;
-	
-	if(md5($mdp_saisi . $salt) == $mdp_hashe OR md5($salt . $mdp_saisi) == $mdp_hashe)
-		return true ;
-	else
-		return false ;
-}
-
 function catalogue($params){
 	if($params)
 		if(!preg_match("^\?", $params))
