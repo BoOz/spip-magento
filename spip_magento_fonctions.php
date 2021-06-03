@@ -79,28 +79,6 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 					),
 						array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
 					);
-		$infos_abonnement = droits_abonne($ws);
-		
-		if(is_array($ws['abonne']))
-			$ws = array_merge(
-				$ws['abonne'],
-				array(
-					'prenom_nom' => $ws['abonne']["prenom"] . " " . $ws['abonne']["nom"],
-					'code_postal' => $ws['abonne']["ADDRESSE_principale"]["ZIP_CODE"],
-					'ville' => $ws['abonne']["ADDRESSE_principale"]["CITY"],
-					'pays' => $ws['abonne']["ADDRESSE_principale"]["COUNTRY"],
-					'droits_lecteur' => $infos_abonnement["droits"] ,
-					'date_fin' => $infos_abonnement["date_fin"] ,
-					'groupeur' => $infos_abonnement["groupeur"] ,
-					'code_magazine' => $infos_abonnement["code_magazine"],
-					'type_contrat' => $infos_abonnement["type_contrat"],
-					'droits_mav' => $infos_abonnement["droits_mav"]
-				),
-				array("ws" => json_encode($ws, JSON_PRETTY_PRINT))
-			) ;
-		
-		// var_dump("<pre>",$ws,"<pre>");
-		// enregistrer si une fonction existe.
 		return $ws ;
 	}
 	else
