@@ -29,7 +29,6 @@
 */
 
 include_once(find_in_path("OAuth.php"));
-include_spip("droits_abonne");
 
 // Les infos sur un client
 // $tout = infos_client(12345);
