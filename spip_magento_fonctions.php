@@ -1,23 +1,25 @@
 <?php
 
 /*
-	Variables à définir dans mes_options.php
+# Connexion avec OAuth au 1.0 WS Magento 
 
-	// Connexion avec OAuth au WS Magento
-	// Définition des identifiants
-	
-	define("SERVICE_PROVIDER","https://oAuth_server");
-	define("CONSUMER_KEY", "XXXXXXXXXXX");
-	define("CONSUMER_SECRET", "XXXXXXXXXXX");
-	
-	define("URL_TOKEN", SERVICE_PROVIDER . "/api/rest/xxxx/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
-	define("SERVEUR_TOKEN_MAITRE", ""); // eventuel fichier connexion bdd ou chercher des meta token.
-	
-	// Récuperer les infos d'un client Magento :
-	define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/xxx/customers");
-	// Catalogue Magento
-	define("URL_WS_CATALOGUE", SERVICE_PROVIDER . "/api/rest/xxx/products/list");
-	
+Variables de config à définir dans mes_options.php :
+
+define("SERVICE_PROVIDER","http://magentohost"); 
+define("CONSUMER_KEY", "cle_recue_de_la_part_du_fournisseur_d_autorisation");
+define("CONSUMER_SECRET", "secret_recu_de_la_part_du_fournisseur_d_autorisation");
+
+define("URL_TOKEN", SERVICE_PROVIDER . "http://magentohost/oauth/token/?key=".CONSUMER_KEY."&secret=".CONSUMER_SECRET);
+
+# Récuperer les infos d'un client :
+define("URL_WS_CLIENT", SERVICE_PROVIDER . "/api/rest/customers");
+define("URL_WS_CATALOGUE", SERVICE_PROVIDER . "/api/rest/products/list");
+
+puis usage :
+
+$url_ws = URL_WS_CLIENT . "/" . $id_client;
+$ws = recuperer_ws_magento($url_ws);
+
 */
 
 include_once(find_in_path("OAuth.php"));
