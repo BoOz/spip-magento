@@ -30,18 +30,6 @@
 
 include_once(find_in_path("OAuth.php"));
 
-// Les infos sur un client
-// $tout = infos_client(12345);
-// $email = infos_client(12345,"email");
-
-function infos_client($ws, $info = ''){
-	
-	if($ws[$info])
-		return $ws[$info] ;
-	
-	return $ws ;
-}
-
 function mettre_a_jour_client_magento($id_client, $email=""){
 	// Check le ws, enregistrer en bdd et renvoyer la réponse du ws.
 	// On l'appelle avec l'id_magento car l'email peut changer
@@ -82,17 +70,6 @@ function mettre_a_jour_client_magento($id_client, $email=""){
 	}
 	else
 		return false ;
-}
-
-function catalogue($params){
-	if($params)
-		if(!preg_match("^\?", $params))
-			$p = "?" . $params ;
-		else
-			$p = $params ;
-	
-	//var_dump(URL_WS_CATALOGUE . $p);
-	return recuperer_ws_magento(URL_WS_CATALOGUE . $p);
 }
 
 // Appeler un webservice en gérant les tokens périmés (même si pas implémenté dans magento apparement...)
