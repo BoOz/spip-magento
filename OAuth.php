@@ -21,13 +21,13 @@ function oauth_recuperer_token($url_token){
 // Parametres OAuth
 // Parameters are sorted by name, using lexicographical byte value ordering.
 
-function oauth_generer_parametres($token){
+function oauth_generer_parametres($consumer_key,$token){
 	$parametres = array_map("rawurlencode", array(
 	'oauth_version' => '1.0',
 	'oauth_signature_method' => 'HMAC-SHA1',
 	'oauth_nonce' => oauth_generer_nonce(),
 	'oauth_timestamp' => time(),
-	'oauth_consumer_key' => CONSUMER_KEY,
+	'oauth_consumer_key' => $consumer_key,
 	'oauth_token' => $token
 	));
 	uksort($parametres, 'strcmp');
@@ -77,6 +77,36 @@ function oauth_generer_parametres_signables($parametres){
 	return $signable_parameters ;
 }
 
+// $parametres = parametre oAuth
+// $methode = GET | POST | ...
+function oauth_preparer_signature($url_ws,$parametres,$methode,$consumer_secret,$secret){
+	// Parametres de la requete
+	$url = parse_url($url_ws) ;
+	$params_url = explode("&", $url['query']) ;
+	if(is_array($params_url))
+		foreach($params_url as $p){
+			$pe = explode("=", $p);
+			if($pe[0] != "")
+				$parametres[$pe[0]] = $pe[1] ;
+		}
+	
+	// Signature
+	$signable_parameters = oauth_generer_parametres_signables($parametres);
+	// The URL used in the Signature Base String MUST include the scheme, authority, and path, and MUST exclude the query and fragment as defined by [RFC3986] section 3. 
+	$url = $url['scheme'] . "://" . $url['host'] . $url['path'];
+	$base_string = oauth_generer_base_string($methode, $url, $signable_parameters);
+	
+	// var_dump($base_string);
+	
+	$signature = oauth_generer_signature($consumer_secret,$secret,$base_string);
+	
+	// On ajoute la signature dans les parametres pour les entetes.
+	$parametres['oauth_signature'] = $signature ;
+	
+	return $parametres ;
+
+}
+
 function oauth_generer_signature($consumer_secret,$secret,$base_string){
 	/**
 	* The HMAC-SHA1 signature method uses the HMAC-SHA1 signature algorithm as defined in [RFC2104]
@@ -103,29 +133,13 @@ function oauth_generer_entetes($oauth){
 	return "Authorization:OAuth," . $r; 
 }
 
-function oauth_recuperer_ws($url_ws,$token,$secret){
+function oauth_recuperer_ws($url_ws,$token,$secret,$consumer_key,$consumer_secret){
 	// Parametres Oauth
-	$parametres = oauth_generer_parametres($token) ;
+	$parametres = oauth_generer_parametres($consumer_key, $token) ;
 	
-	// Parametres de la requete
-	$url = parse_url($url_ws) ;
-	$params_url = explode("&", $url['query']) ;
-	if(is_array($params_url))
-		foreach($params_url as $p){
-			$pe = explode("=", $p);
-			if($pe[0] != "")
-				$parametres[$pe[0]] = $pe[1] ;
-		}
+	// ajouter la signature
+	$parametres = oauth_preparer_signature($url_ws,$parametres,"get",$consumer_secret,$secret) ;
 	
-	// Signature
-	$signable_parameters = oauth_generer_parametres_signables($parametres);
-	// The URL used in the Signature Base String MUST include the scheme, authority, and path, and MUST exclude the query and fragment as defined by [RFC3986] section 3. 
-	$url = $url['scheme'] . "://" . $url['host'] . $url['path'];
-	$base_string = oauth_generer_base_string("GET", $url, $signable_parameters);
-	$signature = oauth_generer_signature(CONSUMER_SECRET,$secret,$base_string);
-	
-	// On ajoute la signature dans les parametres pour les entetes.
-	$parametres['oauth_signature'] = $signature ;
 	// GET via curl
 	$c = curl_init();
 	curl_setopt($c, CURLOPT_URL, $url_ws);
@@ -146,3 +160,34 @@ function oauth_recuperer_ws($url_ws,$token,$secret){
 	return $reponse ;
 }
 
+function oauth_poster_ws($url_ws,$token,$secret,$consumer_key,$consumer_secret,$data){
+		
+	// Parametres Oauth
+	$parametres = oauth_generer_parametres($consumer_key,$token) ;
+	// ajouter la signature
+	$parametres = oauth_preparer_signature($url_ws,$parametres,"post",$consumer_secret,$secret) ;
+
+	$c = curl_init();
+	curl_setopt($c, CURLOPT_URL, $url_ws);
+	curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+	
+	//setting custom header
+	curl_setopt($c, CURLOPT_HTTPHEADER, array("Content-type: application/xml",oauth_generer_entetes($parametres)));
+	
+	// recevoir la réponse sous forme d'entete
+	curl_setopt($c, CURLOPT_HEADER, true);
+	curl_setopt($c, CURLOPT_NOBODY, true);
+	
+	// poster le xml
+	curl_setopt($c, CURLOPT_POST, true);
+	curl_setopt($c, CURLOPT_POSTFIELDS, $data);
+	
+	$header = curl_exec($c);
+	curl_close($c);
+	
+	include_spip("inc/filtres");
+	preg_match_all('#^Location: /api/rest/customers/(.*)$#mi', $header, $matches);
+	
+	return (!empty($matches[1])) ? trim($matches[1][0]) : '' ;
+	
+}

@@ -27,9 +27,9 @@ include_once(find_in_path("OAuth.php"));
 // Appeler un webservice Magento en gérant les tokens périmés (même si pas implémenté dans magento apparement...)
 function recuperer_ws_magento($url_ws){
 	// si le token est périmé ou rejetté, on en redemande un autre.
-	if (!$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"])){
+	if (!$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"],CONSUMER_KEY,CONSUMER_SECRET)){
 		actualiser_token();
-		$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"]);
+		$reponse = oauth_recuperer_ws($url_ws,$GLOBALS['meta']["oauth_token"],$GLOBALS['meta']["oauth_secret"],CONSUMER_KEY,CONSUMER_SECRET);
 	}
 	if($reponse == NULL)
 		return "Serveur REST inaccessible." ;
@@ -47,7 +47,7 @@ function actualiser_token(){
 	if(!defined("SERVEUR_TOKEN_MAITRE")){
 		$reponse = oauth_recuperer_token(URL_TOKEN) ;
 		if($reponse == NULL){
-			spip_log("Serveur d'autorisation inaccessible.", "OAuth-erreurs");
+			spip_log("Serveur d'autorisation inaccessible. :: " . URL_TOKEN, "OAuth-erreurs");
 			return false ;
 		}
 		$token = $reponse['token'] ;
